@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import IngredientsList from "./recipe/IngredientsList";
 import { getRecipeFromLlama } from "../ai";
 import LlamaRecipe from "./recipe/LlamaRecipe";
@@ -20,6 +20,14 @@ export default function MainContent() {
     }
   }
 
+  const recipeSection = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (recipe !== "" && recipeSection.current !== null) {
+      recipeSection.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [recipe]);
+
   return (
     <main>
       <form action={getIngredient} className="add-ingredient-form">
@@ -27,7 +35,11 @@ export default function MainContent() {
         <button>Add ingredient</button>
       </form>
       {ingredients.length > 0 && (
-        <IngredientsList ingredients={ingredients} getRecipe={getRecipe} />
+        <IngredientsList
+          ingredients={ingredients}
+          getRecipe={getRecipe}
+          ref={recipeSection}
+        />
       )}
 
       {recipe && <LlamaRecipe recipe={recipe} />}
